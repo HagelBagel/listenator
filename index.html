@@ -1,19 +1,12 @@
-<!--
-Sample player for trying UI sounds with UI elements
-- Timing/triggering can be a bit wonky
-- If I try to select Drums while Bells is still playing; Drums wont play at all, then Bells wont play...
-MOZ-dev recommends using a buffer node when working with short sounds
--->
-
 <!DOCTYPE html>
 <html>
 <head>
 	<meta charset="utf-8">
   <meta http-equiv="x-ua-compatible" content="ie=edge">
-  <title>Hzplayer Demo</title>
+  <title>Listenator Prototype</title>
   <meta name="description" content="Demo of Hzandbits audio player">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <link rel="stylesheet" type="text/css" href="style.css">
+  <link rel="stylesheet" type="text/css" href="/css/style.css">
 </head>
 <body>
 
@@ -26,19 +19,28 @@ MOZ-dev recommends using a buffer node when working with short sounds
 		<section class="player">
 
 			<audio id="transport" src="/audio/Robotics_Lab_preview.mp3" crossorigin="anonymous" ></audio> <!--- src is the init value, which also helps reset stuff for reloading the page -->
-
-			<!-- type="audio/mpeg" -->
-
-			<button data-playing="false" class="hz-controls-play" role="switch" aria-checked="false">
-				<span>Play</span>
-			</button>
 			
-			<select name="samples" id="sample-select">Robotics_Lab_preview
+			<div class="transport">
+				<button role="switch" aria-checked="false">
+					RW
+				</button>
+			
+				<button data-playing="false" class="hz-controls-play" role="switch" aria-checked="false">
+					Play/Pause
+				</button>
+
+				<button role="switch" aria-checked="false">
+					FWD
+				</button>
+			</div>
+			
+			<select class="tracklist" name="samples" id="sample-select">Robotics_Lab_preview
 				<option value="/audio/Robotics_Lab_preview.mp3">Robotics Lab</option>
 				<option value="/audio/Construction Ambiances.mp3">Construction Ambiances</option>
 				<option value="/audio/Bells.mp3">Bells</option>
 				<option value="/audio/stop1.wav">Drums</option>
 			</select>			
+
 		</section>
 
 		<footer></footer>
@@ -46,80 +48,7 @@ MOZ-dev recommends using a buffer node when working with short sounds
 	</div>
 </div>
 
-<script type="text/javascript">
-	console.clear();
-
-
-let currentTrack = "/audio/Robotics_Lab_preview.mp3";
-let selectElement = document.querySelector("#sample-select");
-
-// instigate our audio context
-// for cross browser
-const AudioContext = window.AudioContext || window.webkitAudioContext;
-const audioCtx = new AudioContext();
-// load some sound
-const audioElement = document.querySelector('audio');
-audioElement.setAttribute("src", currentTrack); 
-const track = audioCtx.createMediaElementSource(audioElement);
-const playButton = document.querySelector('.hz-controls-play');
-
-// play audio
-playButton.addEventListener('click', function() {
-	// check if context is in suspended state (autoplay policy)
-	if (audioCtx.state === 'suspended') {
-		audioCtx.resume();
-	}
-	if (this.dataset.playing === 'false') {
-		audioElement.play();
-		this.dataset.playing = 'true';
-	// press play to restart sample (this breaks the dropdown though. Also if choosing drums, doesn't go back to Bells on page reload???)
-	// but plays bells anyway? 
-	} else if (this.dataset.playing === 'true') {
-		audioElement.currentTime = 0; //reset to start of sample
-		this.dataset.playing = "true";
-	}
-	let state = this.getAttribute('aria-checked') === "true" ? true : false;
-	this.setAttribute( 'aria-checked', state ? "false" : "true" );
-}, false);
-// if track ends
-audioElement.addEventListener('ended', () => {
-	playButton.dataset.playing = 'false';
-	playButton.setAttribute( "aria-checked", "false" );
-}, false);
-
-// eventListener on dropdown. ToDo: If new sound is chosen, stop playing old sound and start the new one
-// Maybe this requires messing with audiobuffers? Would be lots easier in p5js
-
-selectElement.addEventListener("change", function() {
-		
-	audioCtx.suspend(); //stop - maybe this is a bit heavy-handed and breaks stuff?     
-	currentTrack = selectElement.value; //set currentTrack to new sample
-	audioElement.setAttribute("src", currentTrack);
-	
-	// check if context is in suspended state (autoplay policy)
-	if (audioCtx.state === 'suspended') {
-		audioCtx.resume();
-	}
-	if (this.dataset.playing === 'false') {
-		audioElement.play();
-		this.dataset.playing = 'true';
-	// no pause feature here
-	} 
-	let state = this.getAttribute('aria-checked') === "true" ? true : false;
-	this.setAttribute( 'aria-checked', state ? "false" : "true" );
-}, false);
-// if track ends
-audioElement.addEventListener('ended', () => {
-	playButton.dataset.playing = 'false';
-	playButton.setAttribute( "aria-checked", "false" );
-}, false);
-
-function samplePlayer() {}
-
-// connect our graph
-track.connect(audioCtx.destination);
-
-</script>
+<script type="text/javascript" src="../js/player.js"></script>
 
 </body>
 </html>

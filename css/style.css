@@ -1,0 +1,28 @@
+/*  Do button resets like here: https://fvsch.com/styling-buttons/ */
+
+body {
+    background-image: url('/img/vaticanr.jpg');
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: cover;
+}
+
+.player {
+    /* box-sizing: border-box; */
+    width: 90vw;
+    margin: auto;
+    padding: 0.5em;    
+    background: grey;
+}
+
+.transport {
+    display: flex;
+    justify-content: space-between;
+    width: auto;
+}
+
+.tracklist {
+    width: 100%;
+    margin: 1em auto 1em auto;
+    
+}
